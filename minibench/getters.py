@@ -29,6 +29,13 @@ def touch_npz_load(field, fpaths=None, fpath=None):
     return True
 
 
+def touch_npy_load(fpaths=None, fpath=None):
+    fpath = np.random.choice(fpaths) if fpaths else fpath
+    arr = np.load(fpath)
+    np.asarray(arr)
+    return True
+
+
 def touch_next_npz(field, fpaths):
     fpath = fpaths.pop(0)
     arc = np.load(fpath)

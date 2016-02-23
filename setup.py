@@ -31,6 +31,8 @@ setup(
     install_requires=[
         'numpy >= 1.8.0',
         'pescador >= 0.1.2',
+        'pytest',
+        'pytest-benchmark',
         'six'
     ]
 )

@@ -1,0 +1,6 @@
+[
+    { "num_items": 10, "shape": [64, 64] },
+    { "num_items": 100, "shape": [64, 64] },
+    { "num_items": 10, "shape": [2048, 256] },
+    { "num_items": 100, "shape": [2048, 256] }
+]

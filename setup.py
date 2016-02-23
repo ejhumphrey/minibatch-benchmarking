@@ -5,7 +5,7 @@ description = \
     """Minibatch Benchmarking -- Comparison of data storage and sampling
     strategies for training online learning algorithms."""
 
-version = imp.load_source('version', 'version.py')
+version = imp.load_source('minibench.version', 'minibench/version.py')
 url = 'http://github.com/ejhumphrey/minibatch-benchmarking'
 setup(
     name='minibench',

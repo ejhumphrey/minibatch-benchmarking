@@ -19,15 +19,21 @@ will return a dict of DataFrames, where the keys are the different
 parameters.
 
     > df = benchmarks.to_df(split_on_params=True)
+    > df.keys()
 
+    [u'{"shape": [2048, 256], "num_items": 100}', u'{"shape": [64, 64], "num_items": 100}', u'{"shape": [64, 64], "num_items": 10}', u'{"shape": [2048, 256], "num_items": 10}']
 """
 
 import collections
 import json
 import logging
+import os
 import pandas
 
 logger = logging.getLogger(__name__)
+
+BENCHMARKS_DIR = os.path.join(os.path.dirname(__file__), ".benchmarks")
+BENCHMARK_STR = "'py.test -vs testbench_performance.py --benchmark-save=bench1'"
 
 
 def parse_benchmark_name(name):
@@ -82,6 +88,7 @@ class PytestBenchmarkFile(object):
         file_path : str
             File path to the benchmark file.
         """
+        self._path = file_path
         with open(file_path, 'r') as fh:
             self.data = json.load(fh)
 
@@ -90,6 +97,10 @@ class PytestBenchmarkFile(object):
 
     def __getattr__(self, key):
         return self.data[key]
+
+    def __repr__(self):
+        return "PytestBenchmarkFile(file_path='{}', n_benchmarks={})".format(
+            self._path, len(self.data['benchmarks']))
 
     def to_df(self, split_on_params=False):
         """Return the benchmarks from this file as a dataframe.
@@ -131,6 +142,42 @@ class PytestBenchmarkFile(object):
                     stats[key],
                     index=labels[key])
             return dataframes
+
+
+def last_benchmark():
+    """Get the most recent benchmarking file produced by the py.test
+    benchmarking script.
+
+    TODO: Untested for more than one configuration.
+
+    Returns
+    -------
+    benchmarks : PytestBenchmarkFile
+    """
+    if not os.path.exists(BENCHMARKS_DIR):
+        logger.warning("No Benchmarks directory; have you run the "
+                       "benchmarking script yet? \nTry:{}"
+                       .format(BENCHMARK_STR))
+        return None
+
+    # Get all the json files
+    file_ref = {}
+    for configuration in os.listdir(BENCHMARKS_DIR):
+        for filename in os.listdir(os.path.join(
+                                   BENCHMARKS_DIR, configuration)):
+            fp_split = filename.split('_')
+            index = int(fp_split[0])
+            file_ref[index] = (BENCHMARKS_DIR, configuration, filename)
+
+    # Get the latest one. Should be the max index.
+    if file_ref:
+        path = os.path.join(*file_ref[max(file_ref.keys())])
+        return load(path)
+    # If it hasn't been run yet, there are no files available.
+    else:
+        logger.warning("No benchmark json files exist; try running:\n{}"
+                       .format(BENCHMARK_STR))
+        return None
 
 
 def load(file_path):

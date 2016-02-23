@@ -31,5 +31,3 @@ def test_create_npy_collection():
 
     data = np.load(new_files[0])
     assert data.shape == shape
-
-

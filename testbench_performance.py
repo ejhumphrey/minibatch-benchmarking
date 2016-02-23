@@ -12,6 +12,12 @@ Optionally, you can direct the test to preserve the temporary data generated
 during the tests...
 
   $ py.test -vs --no-clean testbench_performance.py
+
+
+You need to run it with the --benchmark-save=foobar parameter
+for to successfully generate a json output file.
+
+  $ py.test -vs testbench_performance.py --benchmark-save=bench1
 """
 
 import atexit

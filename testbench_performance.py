@@ -24,8 +24,11 @@ import tempfile as tmp
 
 import minibench
 
+# TODO: Yank these two from the config options.
 WORKSPACE = tmp.mkdtemp()
 DATA_PARAMS = json.load(open("./params.json"))
+
+# TODO: Add verbosity to the config options.
 logging.basicConfig(level=logging.INFO)
 
 logging.info("Using {} for workspace".format(WORKSPACE))

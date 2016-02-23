@@ -3,7 +3,9 @@ sudo: false
 addons:
   apt:
     packages:
-    - sox
+    - libzmq-dev
+    - python-scipy
+    - python3-scipy
 
 cache:
   directories:
@@ -25,11 +27,11 @@ install:
 
 script:
     - python --version
-    - nosetests --with-coverage --cover-erase --cover-package=claudio -v -w ./
+    - py.test -vs minibench
 
 after_success:
     - coveralls
-    - pip uninstall -y claudio
+    - pip uninstall -y minibench
 
 after_failure:
-    - pip uninstall -y claudio
+    - pip uninstall -y minibench

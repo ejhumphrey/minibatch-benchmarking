@@ -32,7 +32,8 @@ def touch_npz_load(field, fpaths=None, fpath=None):
 def touch_npy_load(fpaths=None, fpath=None):
     fpath = np.random.choice(fpaths) if fpaths else fpath
     arr = np.load(fpath)
-    np.asarray(arr)
+    # Force the mem-copy to the namespace.
+    np.array(arr)
     return True
 
 

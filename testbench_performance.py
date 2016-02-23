@@ -26,6 +26,7 @@ import minibench
 
 # TODO: Yank these two from the config options.
 WORKSPACE = tmp.mkdtemp()
+# param_file = pytest.config.getoption("--param_file")
 DATA_PARAMS = json.load(open("./params.json"))
 
 # TODO: Add verbosity to the config options.

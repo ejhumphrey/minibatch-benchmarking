@@ -1,0 +1,140 @@
+{
+    "commit_info": {
+        "id": "471bca1f9bc59b846d3854a5082c36d686733606", 
+        "dirty": false
+    }, 
+    "version": "3.0.0", 
+    "benchmarks": [
+        {
+            "stats": {
+                "q1": 0.0002579689025878906, 
+                "q3": 0.00037598609924316406, 
+                "iterations": 1, 
+                "min": 0.0001900196075439453, 
+                "max": 0.0005631446838378906, 
+                "median": 0.00029397010803222656, 
+                "iqr": 0.00011801719665527344, 
+                "stddev_outliers": 47, 
+                "ld15iqr": 0.0001900196075439453, 
+                "stddev": 6.826384040503229e-05, 
+                "hd15iqr": 0.0005631446838378906, 
+                "outliers": "47;1", 
+                "iqr_outliers": 1, 
+                "rounds": 125, 
+                "mean": 0.00030804443359375
+            }, 
+            "fullname": "testbench_performance.py::test_touch_npy_load_random[{u'shape': [64, 64], u'num_items': 10}]", 
+            "group": null, 
+            "name": "test_touch_npy_load_random[{u'shape': [64, 64], u'num_items': 10}]", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.00019502639770507812, 
+                "q3": 0.000209808349609375, 
+                "iterations": 1, 
+                "min": 0.0001900196075439453, 
+                "max": 0.0017158985137939453, 
+                "median": 0.00019693374633789062, 
+                "iqr": 1.4781951904296875e-05, 
+                "stddev_outliers": 191, 
+                "ld15iqr": 0.0001900196075439453, 
+                "stddev": 5.366802279681221e-05, 
+                "hd15iqr": 0.00023221969604492188, 
+                "outliers": "191;420", 
+                "iqr_outliers": 420, 
+                "rounds": 2858, 
+                "mean": 0.00021277723652737552
+            }, 
+            "fullname": "testbench_performance.py::test_touch_npy_load_random[{u'shape': [64, 64], u'num_items': 100}]", 
+            "group": null, 
+            "name": "test_touch_npy_load_random[{u'shape': [64, 64], u'num_items': 100}]", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.0006899833679199219, 
+                "q3": 0.0007369518280029297, 
+                "iterations": 1, 
+                "min": 0.0006189346313476562, 
+                "max": 0.001589059829711914, 
+                "median": 0.0007100105285644531, 
+                "iqr": 4.696846008300781e-05, 
+                "stddev_outliers": 87, 
+                "ld15iqr": 0.0006279945373535156, 
+                "stddev": 9.110647933661226e-05, 
+                "hd15iqr": 0.0008080005645751953, 
+                "outliers": "87;87", 
+                "iqr_outliers": 87, 
+                "rounds": 862, 
+                "mean": 0.0007308846006813846
+            }, 
+            "fullname": "testbench_performance.py::test_touch_npy_load_random[{u'shape': [2048, 256], u'num_items': 10}]", 
+            "group": null, 
+            "name": "test_touch_npy_load_random[{u'shape': [2048, 256], u'num_items': 10}]", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }, 
+        {
+            "stats": {
+                "q1": 0.0009365081787109375, 
+                "q3": 0.0012254714965820312, 
+                "iterations": 1, 
+                "min": 0.0007371902465820312, 
+                "max": 0.0018038749694824219, 
+                "median": 0.0010180473327636719, 
+                "iqr": 0.00028896331787109375, 
+                "stddev_outliers": 178, 
+                "ld15iqr": 0.0007371902465820312, 
+                "stddev": 0.00021323636142683467, 
+                "hd15iqr": 0.0016810894012451172, 
+                "outliers": "178;4", 
+                "iqr_outliers": 4, 
+                "rounds": 664, 
+                "mean": 0.001091158174606691
+            }, 
+            "fullname": "testbench_performance.py::test_touch_npy_load_random[{u'shape': [2048, 256], u'num_items': 100}]", 
+            "group": null, 
+            "name": "test_touch_npy_load_random[{u'shape': [2048, 256], u'num_items': 100}]", 
+            "options": {
+                "disable_gc": false, 
+                "warmup": false, 
+                "timer": "time", 
+                "min_rounds": 5, 
+                "max_time": 1.0, 
+                "min_time": 5e-06
+            }
+        }
+    ], 
+    "machine_info": {
+        "node": "ChristohersMBP2", 
+        "machine": "x86_64", 
+        "python_version": "2.7.10", 
+        "release": "14.5.0", 
+        "python_compiler": "GCC 4.2.1 Compatible Apple LLVM 6.1.0 (clang-602.0.53)", 
+        "python_implementation": "CPython", 
+        "processor": "i386", 
+        "system": "Darwin"
+    }, 
+    "datetime": "2016-02-23T17:58:54.043382"
+}

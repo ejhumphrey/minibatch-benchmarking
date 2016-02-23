@@ -33,6 +33,7 @@ setup(
         'pescador >= 0.1.2',
         'pytest',
         'pytest-benchmark',
+        'pandas >= 0.17.0'
         'six'
     ]
 )

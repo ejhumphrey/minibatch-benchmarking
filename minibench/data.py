@@ -70,3 +70,66 @@ def create_npy_collection(shape, num_items, output_dir, **kwargs):
         new_files.append(fpath)
 
     return new_files
+
+
+def convert_npys_to_npzs(npy_files, arr_key, output_dir):
+    """Create a number of NPY files.
+
+    Parameters
+    ----------
+    npy_files = list of str
+        Paths to the created set of files.
+
+    arr_key : str
+        Name to write the array under in the npz archive.
+
+    output_dir : str
+        Path under which to write data.
+
+    Returns
+    -------
+    npz_files : list of str
+        Newly created NPZ files.
+    """
+    pass
+
+
+def convert_npys_to_h5py(npy_files, fpath):
+    """Convert a collection of NPY files into h5py.
+
+    Note: It will (should?) do this in a flat manner. This is suspected to be
+    suboptimal (hence biggie).
+
+    Parameters
+    ----------
+    npy_files = list of str
+        Paths to the created set of files.
+
+    fpath : str
+        Filepath to write h5py file.
+
+    Returns
+    -------
+    success : bool
+        True if `fpath` exists, else False.
+    """
+    return os.path.exists(fpath)
+
+
+def convert_npzs_to_biggie(npz_files, fpath):
+    """Convert a collection of NPZ files into a biggie stash.
+
+    Parameters
+    ----------
+    npz_files = list of str
+        Paths to the created set of files.
+
+    fpath : str
+        Filepath to write biggie stash file.
+
+    Returns
+    -------
+    success : bool
+        True if `fpath` exists, else False.
+    """
+    return os.path.exists(fpath)

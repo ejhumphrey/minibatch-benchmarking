@@ -12,11 +12,19 @@ Now that you have your benchmarks in memory, access them usefully
 by getting a pandas data frame out of them:
 
     > df = benchmarks.to_df()
+
+However, you may wish separate out the tests by their parameters.
+A helper is provided to do this; calling to_df() in the following way
+will return a dict of DataFrames, where the keys are the different
+parameters.
+
+    > df = benchmarks.to_df(split_on_params=True)
+
 """
 
+import collections
 import json
 import logging
-import os
 import pandas
 
 logger = logging.getLogger(__name__)
@@ -83,23 +91,46 @@ class PytestBenchmarkFile(object):
     def __getattr__(self, key):
         return self.data[key]
 
-    def to_df(self, split_on_options=False):
+    def to_df(self, split_on_params=False):
         """Return the benchmarks from this file as a dataframe.
 
         Parameters
         ----------
-        split_on_options : bool
+        split_on_params : bool
             If true, parses the labels, and returns a list of dataframes
             with one for each parameter set.
 
         Returns
         -------
+        df_result : pandas.DataFrame or dict
+            If split_on_params is False, returns a single DataFrame
+            with all results.
 
+            If True, returns a dictionary where the keys are the
+            parameter strings, and the values are dataframes
+            indexed by the test name.
         """
-        labels = [x["name"] for x in self.data['benchmarks']]
-        stats = [x["stats"] for x in self.data['benchmarks']]
+        if not split_on_params:
+            labels = [x["name"] for x in self.data['benchmarks']]
+            stats = [x["stats"] for x in self.data['benchmarks']]
 
-        return pandas.DataFrame(stats, index=labels)
+            return pandas.DataFrame(stats, index=labels)
+        else:
+            labels = collections.defaultdict(list)
+            stats = collections.defaultdict(list)
+            # Collect the data
+            for benchmark in self.data['benchmarks']:
+                name, params = parse_benchmark_name(benchmark['name'])
+                labels[params] += [name]
+                stats[params] += [benchmark['stats']]
+            # make a dataframe for each params value and return it as
+            # a dict.
+            dataframes = {}
+            for key in labels.keys():
+                dataframes[key] = pandas.DataFrame(
+                    stats[key],
+                    index=labels[key])
+            return dataframes
 
 
 def load(file_path):

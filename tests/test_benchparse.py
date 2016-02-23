@@ -52,5 +52,6 @@ def test_load_benchfile():
     yield __test_has, benchmarks, "benchmarks"
 
     yield __test_exists, benchmarks.to_df()
-    yield __test_exists, benchmarks.to_df(split_on_options=True)
-
+    df_data = benchmarks.to_df(split_on_params=True)
+    yield __test_exists, df_data
+    yield __test_is, df_data, dict

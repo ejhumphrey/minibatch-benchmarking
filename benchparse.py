@@ -33,6 +33,7 @@ import pandas
 logger = logging.getLogger(__name__)
 
 BENCHMARKS_DIR = os.path.join(os.path.dirname(__file__), ".benchmarks")
+BENCHMARK_STR = "'py.test -vs testbench_performance.py --benchmark-save=bench1'"
 
 
 def parse_benchmark_name(name):
@@ -153,6 +154,12 @@ def last_benchmark():
     -------
     benchmarks : PytestBenchmarkFile
     """
+    if not os.path.exists(BENCHMARKS_DIR):
+        logger.warning("No Benchmarks directory; have you run the "
+                       "benchmarking script yet? \nTry:{}"
+                       .format(BENCHMARK_STR))
+        return None
+
     # Get all the json files
     file_ref = {}
     for configuration in os.listdir(BENCHMARKS_DIR):
@@ -163,8 +170,14 @@ def last_benchmark():
             file_ref[index] = (BENCHMARKS_DIR, configuration, filename)
 
     # Get the latest one. Should be the max index.
-    path = os.path.join(*file_ref[max(file_ref.keys())])
-    return load(path)
+    if file_ref:
+        path = os.path.join(*file_ref[max(file_ref.keys())])
+        return load(path)
+    # If it hasn't been run yet, there are no files available.
+    else:
+        logger.warning("No benchmark json files exist; try running:\n{}"
+                       .format(BENCHMARK_STR))
+        return None
 
 
 def load(file_path):

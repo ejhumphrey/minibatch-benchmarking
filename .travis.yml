@@ -1,0 +1,35 @@
+sudo: false
+
+addons:
+  apt:
+    packages:
+    - sox
+
+cache:
+  directories:
+  - $HOME/env
+
+language: python
+
+notifications:
+  email: false
+
+python:
+    - "2.7"
+    - "3.4"
+    - "3.5"
+
+install:
+    - pip install coveralls
+    - pip install -e ./
+
+script:
+    - python --version
+    - nosetests --with-coverage --cover-erase --cover-package=claudio -v -w ./
+
+after_success:
+    - coveralls
+    - pip uninstall -y claudio
+
+after_failure:
+    - pip uninstall -y claudio

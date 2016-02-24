@@ -1,3 +1,3 @@
 from . import data
-from . import getters
+from . import samplers
 from . import version

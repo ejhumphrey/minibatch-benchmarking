@@ -155,7 +155,7 @@ def one_npz_random_slice(fpath, field, shape, **kwargs):
         yield arc[field][new_slice]
 
 
-def one_h5py_random_slice(key, fp, shape):
+def one_h5py_random_slice(key, fp, shape, **kwargs):
     """Extract random slices from an h5py File.
 
     Parameters
@@ -175,15 +175,21 @@ def one_h5py_random_slice(key, fp, shape):
     shape : tuple
         Shape of the random slice to extract.
 
+    kwargs : dict
+        Arguments to forward on to the random_slices
+
     Yields
     ------
     obs : np.ndarray
         Extracted observation with size `shape`.
     """
-    pass
+    dset = fp[key]
+    arr_shape = dset.shape
+    for new_slice in random_slices(arr_shape, shape, **kwargs):
+        yield dset[new_slice]
 
 
-def one_biggie_random_slice(key, stash, field, shape):
+def one_biggie_random_slice(key, stash, field, shape, **kwargs):
     """Extract random slices from a biggie Stash.
 
     Parameters
@@ -206,7 +212,10 @@ def one_biggie_random_slice(key, stash, field, shape):
     obs : np.ndarray
         Extracted observation with size `shape`.
     """
-    pass
+    entity = stash.get(key)
+    arr_shape = entity[field].shape
+    for new_slice in random_slices(arr_shape, shape, **kwargs):
+        yield entity[field].slice(new_slice)
 
 
 def mux_random_slice(sampler, collec, shape, working_size=10, lam=25,

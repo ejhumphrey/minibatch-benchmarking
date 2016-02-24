@@ -36,9 +36,9 @@ def test_random_slices():
         yield __asseq, x_sub.shape, slice_shape
 
 
-@pytest.mark.skipif(True, reason='todo')
-def test_touch_npy_load():
-    assert False
+def test_touch_npy_load(npy_files):
+    assert minibench.samplers.touch_npy_load(fpaths=npy_files)
+    assert minibench.samplers.touch_npy_load(fpath=npy_files[0])
 
 
 def test_one_npy_load_random_slice(npy_files):

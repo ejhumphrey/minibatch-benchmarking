@@ -219,10 +219,9 @@ def one_biggie_random_slice(key, stash, field, shape, **kwargs):
 
 
 def mux_random_slice(sampler, collec, shape, working_size=10, lam=25,
-                     **kwargs):
+                     pool_weights=None, with_replacement=True, n_samples=None,
+                     prune_empty_seeds=True, revive=False, **kwargs):
     """Sample random slices from a collection of stuff.
-
-    IOW: I yield observations from a consolidated stream of generators.
 
     Parameters
     ----------
@@ -240,8 +239,12 @@ def mux_random_slice(sampler, collec, shape, working_size=10, lam=25,
     working_size : int, default=10, > 0
         Number of generators to keep alive at any point in time.
 
-    lam : scalar, > 0
-        Poisson parameter, used for dropping / replacing a given generator.
+    # pescador.mux parameters
+    lam : scalar, default=25
+    pool_weights : array_like, default=None
+    with_replacement : bool, default=True
+    prune_empty_seeds : bool=True
+    revive : bool=False
 
     kwargs : dict
         Key-value map for the `sampler` generator.
@@ -254,6 +257,7 @@ def mux_random_slice(sampler, collec, shape, working_size=10, lam=25,
     npz_pool = [pescador.Streamer(sampler, item, shape=shape, **kwargs)
                 for item in collec]
 
-    return pescador.mux(seed_pool=npz_pool, n_samples=None, k=working_size,
-                        lam=lam, pool_weights=None, with_replacement=True,
-                        prune_empty_seeds=True, revive=False)
+    return pescador.mux(seed_pool=npz_pool, n_samples=n_samples,
+                        k=working_size, lam=lam, pool_weights=pool_weights,
+                        with_replacement=with_replacement,
+                        prune_empty_seeds=prune_empty_seeds, revive=revive)

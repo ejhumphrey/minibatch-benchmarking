@@ -47,18 +47,18 @@ def test_one_npy_load_random_slice(npy_files):
     for fpath in npy_files:
         # Get a few of one kind of shape
         slice_shape = (3, 2)
-        npy_slicer = minibench.samplers.one_npy_random_slice(
+        sampler = minibench.samplers.one_npy_random_slice(
             fpath, slice_shape, mmap_mode=None, max_count=max_count)
 
-        for rand_slice in npy_slicer:
+        for rand_slice in sampler:
             assert rand_slice.shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
-        npy_slicer = minibench.samplers.one_npy_random_slice(
+        sampler = minibench.samplers.one_npy_random_slice(
             fpath, slice_shape, mmap_mode=None, max_count=max_count)
 
-        for rand_slice in npy_slicer:
+        for rand_slice in sampler:
             assert rand_slice.shape == slice_shape
 
 
@@ -68,18 +68,18 @@ def test_one_npy_memmap_random_slice(npy_files):
     for fpath in npy_files:
         # Get a few of one kind of shape
         slice_shape = (3, 2)
-        npy_slicer = minibench.samplers.one_npy_random_slice(
+        sampler = minibench.samplers.one_npy_random_slice(
             fpath, slice_shape, mmap_mode='r', max_count=max_count)
 
-        for rand_slice in npy_slicer:
+        for rand_slice in sampler:
             assert rand_slice.shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
-        npy_slicer = minibench.samplers.one_npy_random_slice(
+        sampler = minibench.samplers.one_npy_random_slice(
             fpath, slice_shape, mmap_mode='r', max_count=max_count)
 
-        for rand_slice in npy_slicer:
+        for rand_slice in sampler:
             assert rand_slice.shape == slice_shape
 
 
@@ -149,6 +149,13 @@ def test_one_biggie_random_slice(stash_file):
             assert rand_slice.shape == slice_shape
 
 
-@pytest.mark.skipif(True, reason='todo')
-def test_mux_random_slice():
-    assert False
+def test_mux_random_slice(npy_files):
+    slice_shape = (3, 2)
+    sampler = minibench.samplers.mux_random_slice(
+        sampler=minibench.samplers.one_npy_random_slice,
+        collec=npy_files, shape=slice_shape, mmap_mode='r',
+        max_count=3, with_replacement=False)
+
+    # Run the sampler to exhaustion.
+    for rand_slice in sampler:
+        assert rand_slice.shape == slice_shape

@@ -1,9 +1,10 @@
+import h5py
 import numpy as np
 import os
 import uuid
 
 
-def _basename(fpath):
+def filebase(fpath):
     """Return the file's base name, e.g. '/x/y.z' -> 'y'
 
     Parameters
@@ -110,7 +111,7 @@ def convert_npys_to_npzs(npy_files, arr_key, output_dir):
     npz_files = []
     for fpath in npy_files:
         data = {arr_key: np.load(fpath)}
-        npz_path = os.path.join(output_dir, "{}.npz".format(_basename(fpath)))
+        npz_path = os.path.join(output_dir, "{}.npz".format(filebase(fpath)))
         np.savez(npz_path, **data)
         npz_files.append(npz_path)
 
@@ -136,6 +137,12 @@ def convert_npys_to_h5py(npy_files, fpath):
     success : bool
         True if `fpath` exists, else False.
     """
+    fhandle = h5py.File(fpath)
+    for fpath in npy_files:
+        data = np.load(fpath)
+        fhandle.create_dataset(filebase(fpath), data=data)
+
+    fhandle.close()
     return os.path.exists(fpath)
 
 

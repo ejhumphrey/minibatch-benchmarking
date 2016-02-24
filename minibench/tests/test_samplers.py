@@ -47,16 +47,16 @@ def test_one_npy_load_random_slice(npy_files):
     for file in npy_files:
         # Get a few of one kind of shape
         slice_shape = (3, 2)
-        npy_slicer = minibench.samplers.one_npy_load_random_slice(
-            file, slice_shape, max_count=max_count)
+        npy_slicer = minibench.samplers.one_npy_random_slice(
+            file, slice_shape, mmap_mode=None, max_count=max_count)
 
         for rand_slice in npy_slicer:
             assert rand_slice.shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
-        npy_slicer = minibench.samplers.one_npy_load_random_slice(
-            file, slice_shape, max_count=max_count)
+        npy_slicer = minibench.samplers.one_npy_random_slice(
+            file, slice_shape, mmap_mode=None, max_count=max_count)
 
         for rand_slice in npy_slicer:
             assert rand_slice.shape == slice_shape
@@ -68,16 +68,16 @@ def test_one_npy_memmap_random_slice(npy_files):
     for file in npy_files:
         # Get a few of one kind of shape
         slice_shape = (3, 2)
-        npy_slicer = minibench.samplers.one_npy_memmap_random_slice(
-            file, slice_shape, max_count=max_count)
+        npy_slicer = minibench.samplers.one_npy_random_slice(
+            file, slice_shape, mmap_mode='r', max_count=max_count)
 
         for rand_slice in npy_slicer:
             assert rand_slice.shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
-        npy_slicer = minibench.samplers.one_npy_memmap_random_slice(
-            file, slice_shape, max_count=max_count)
+        npy_slicer = minibench.samplers.one_npy_random_slice(
+            file, slice_shape, mmap_mode='r', max_count=max_count)
 
         for rand_slice in npy_slicer:
             assert rand_slice.shape == slice_shape

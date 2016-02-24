@@ -96,7 +96,7 @@ def touch_npy_load(fpaths=None, fpath=None):
 #     return True
 
 
-def one_npy_load_random_slice(fpath, shape, **kwargs):
+def one_npy_random_slice(fpath, shape, mmap_mode=None, **kwargs):
     """Extract random slices from an NPY file, using np.load.
 
     Parameters
@@ -107,38 +107,8 @@ def one_npy_load_random_slice(fpath, shape, **kwargs):
     shape : tuple
         Shape of the random slice to extract.
 
-    kwargs : dict
-        Arguments to forward on to the random_slices
-
-    Yields
-    ------
-    obs : np.ndarray
-        Extracted observation with size `shape`.
-    """
-    # TODO: Should we be np.array()ing this to force
-    #  a copy (ejhumphrey?)
-    np_data = np.load(fpath)
-
-    # Generate a slice in the bounds of this data.
-    for new_slice in random_slices(np_data.shape,
-                                   shape, **kwargs):
-        yield np_data[new_slice]
-
-
-def one_npy_memmap_random_slice(fpath, shape, **kwargs):
-    """Extract random slices from an NPY file, using np.memmap.
-
-    TODO: This could be the same as the above function
-    with a parameter mmap=True or something. It's otherwise
-    exactly the same...
-
-    Parameters
-    ----------
-    fpath : str
-        Path to an NPY file to load.
-
-    shape : tuple
-        Shape of the random slice to extract.
+    mmap_mode : [None, 'r+', 'r', 'w', 'c'], default=None
+        Memory mapping mode; see np.memmap for more details on the modes.
 
     kwargs : dict
         Arguments to forward on to the random_slices
@@ -148,15 +118,14 @@ def one_npy_memmap_random_slice(fpath, shape, **kwargs):
     obs : np.ndarray
         Extracted observation with size `shape`.
     """
-    np_data = np.load(fpath, mmap_mode='r')
+    np_data = np.load(fpath, mmap_mode)
 
     # Generate a slice in the bounds of this data.
-    for new_slice in random_slices(np_data.shape,
-                                   shape, **kwargs):
+    for new_slice in random_slices(np_data.shape, shape, **kwargs):
         yield np_data[new_slice]
 
 
-def one_npz_load_random_slice(fpath, field, shape):
+def one_npz_random_slice(fpath, field, shape):
     """Extract random slices from an NPZ archive.
 
     IOW: I yield observations from a bag of correlated data.

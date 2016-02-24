@@ -1,16 +1,15 @@
-import atexit
+"""
+Important Development Info:
+The data @fixtures live in the conftest.py, making them global
+to the modules in this folder.
+"""
+
 import biggie
 import h5py
 import numpy as np
 import os
-import pytest
-import shutil
-import tempfile
 
 import minibench.data
-
-# Could use a py2 fallback? py3 does this cleanly.
-WORKSPACE = tempfile.mkdtemp()
 
 
 def test_random_ndarrays():
@@ -27,13 +26,13 @@ def test_random_ndarrays():
     assert count == num_items
 
 
-def test_create_npy_collection():
+def test_create_npy_collection(workspace):
     shape = (20, 20)
     seed = 123
     num_items = 5
 
     npy_files = minibench.data.create_npy_collection(shape, num_items,
-                                                     WORKSPACE, seed=seed)
+                                                     workspace, seed=seed)
 
     assert len(npy_files) == num_items
 
@@ -41,19 +40,10 @@ def test_create_npy_collection():
     assert data.shape == shape
 
 
-@pytest.fixture()
-def npy_files():
-    shape = (20, 20)
-    seed = 123
-    num_items = 5
-    return minibench.data.create_npy_collection(
-        shape, num_items, WORKSPACE, seed=seed)
-
-
-def test_convert_npys_to_npzs(npy_files):
+def test_convert_npys_to_npzs(npy_files, workspace):
     arr_key = 'data'
     npz_files = minibench.data.convert_npys_to_npzs(
-        npy_files, arr_key, WORKSPACE)
+        npy_files, arr_key, workspace)
 
     for npy, npz in zip(npy_files, npz_files):
         arc = np.load(npz)
@@ -62,14 +52,8 @@ def test_convert_npys_to_npzs(npy_files):
         np.testing.assert_array_equal(arc[arr_key], arr)
 
 
-@pytest.fixture()
-def npz_files(npy_files):
-    return minibench.data.convert_npys_to_npzs(
-        npy_files, 'data', WORKSPACE)
-
-
-def test_convert_npys_to_h5py(npy_files):
-    fpath = os.path.join(WORKSPACE, "test_h5py.hdf5")
+def test_convert_npys_to_h5py(npy_files, workspace):
+    fpath = os.path.join(workspace, "test_h5py.hdf5")
     success = minibench.data.convert_npys_to_h5py(
         npy_files, fpath)
 
@@ -83,8 +67,8 @@ def test_convert_npys_to_h5py(npy_files):
         np.testing.assert_array_equal(dset.value, arr)
 
 
-def test_convert_npzs_to_biggie(npz_files):
-    fpath = os.path.join(WORKSPACE, "test_biggie.hdf5")
+def test_convert_npzs_to_biggie(npz_files, workspace):
+    fpath = os.path.join(workspace, "test_biggie.hdf5")
     success = minibench.data.convert_npzs_to_biggie(npz_files, fpath)
 
     assert success
@@ -99,11 +83,3 @@ def test_convert_npzs_to_biggie(npz_files):
                 # Update to `entity.get(field)` when biggie:#
                 getattr(entity, field),
                 arc[field])
-
-
-def cleanup():
-    """Be sure to clear out the temp directory."""
-    if os.path.exists(WORKSPACE):
-        shutil.rmtree(WORKSPACE)
-
-atexit.register(cleanup)

@@ -1,7 +1,11 @@
+"""
+Important Development Info:
+The data @fixtures live in the conftest.py, making them global
+to the modules in this folder.
+"""
+
 import numpy as np
-import os
 import pytest
-import tempfile
 import uuid
 
 import minibench.data
@@ -38,7 +42,8 @@ def test_touch_npy_load():
 
 
 @pytest.mark.skipif(True, reason='todo')
-def test_one_npy_load_random_slice():
+def test_one_npy_load_random_slice(npy_files):
+    # Create some data
     assert False
 
 

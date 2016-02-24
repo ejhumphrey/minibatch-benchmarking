@@ -119,13 +119,13 @@ def one_npy_random_slice(fpath, shape, mmap_mode=None, **kwargs):
         Extracted observation with size `shape`.
     """
     np_data = np.load(fpath, mmap_mode)
-
+    data_shape = np.shape(np_data)
     # Generate a slice in the bounds of this data.
-    for new_slice in random_slices(np_data.shape, shape, **kwargs):
+    for new_slice in random_slices(data_shape, shape, **kwargs):
         yield np_data[new_slice]
 
 
-def one_npz_random_slice(fpath, field, shape):
+def one_npz_random_slice(fpath, field, shape, **kwargs):
     """Extract random slices from an NPZ archive.
 
     IOW: I yield observations from a bag of correlated data.
@@ -141,6 +141,9 @@ def one_npz_random_slice(fpath, field, shape):
     shape : tuple
         Shape of the random slice to extract.
 
+    kwargs : dict
+        Arguments to forward on to the random_slices
+
     Yields
     ------
     obs : np.ndarray
@@ -148,12 +151,8 @@ def one_npz_random_slice(fpath, field, shape):
     """
     arc = np.load(fpath)
     arr_shape = np.shape(arc[field])
-    while True:
-        yield arc[field][random_slice_idx(arr_shape, shape)]
-
-    # Alternatively
-    # for slc in random_slice_idx(arr_shape, shape):
-    #     yield arc[field][slc]
+    for new_slice in random_slices(arr_shape, shape, **kwargs):
+        yield arc[field][new_slice]
 
 
 def one_h5py_random_slice(key, fp, shape):

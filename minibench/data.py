@@ -3,6 +3,22 @@ import os
 import uuid
 
 
+def _basename(fpath):
+    """Return the file's base name, e.g. '/x/y.z' -> 'y'
+
+    Parameters
+    ----------
+    fpath : str
+        Filepath to parse
+
+    Returns
+    -------
+    fbase : str
+        Basename of the file.
+    """
+    return os.path.splitext(os.path.basename(fpath))[0]
+
+
 def random_ndarrays(shape, num_items=None, loc=0, scale=1.0,
                     dtype=np.float64, seed=12345):
     """Produce a number of key-value, normally distributed ndarrays.
@@ -91,7 +107,14 @@ def convert_npys_to_npzs(npy_files, arr_key, output_dir):
     npz_files : list of str
         Newly created NPZ files.
     """
-    pass
+    npz_files = []
+    for fpath in npy_files:
+        data = {arr_key: np.load(fpath)}
+        npz_path = os.path.join(output_dir, "{}.npz".format(_basename(fpath)))
+        np.savez(npz_path, **data)
+        npz_files.append(npz_path)
+
+    return npz_files
 
 
 def convert_npys_to_h5py(npy_files, fpath):

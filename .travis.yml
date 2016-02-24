@@ -23,6 +23,7 @@ python:
 
 install:
     - pip install coveralls
+    - pip install git+https://github.com/ejhumphrey/biggie.git
     - pip install -e ./
 
 script:

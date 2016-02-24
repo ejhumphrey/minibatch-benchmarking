@@ -1,3 +1,4 @@
+import biggie
 import h5py
 import numpy as np
 import os
@@ -162,4 +163,10 @@ def convert_npzs_to_biggie(npz_files, fpath):
     success : bool
         True if `fpath` exists, else False.
     """
+    stash = biggie.Stash(fpath)
+    for fpath in npz_files:
+        entity = biggie.Entity(**np.load(fpath))
+        stash.add(filebase(fpath), entity)
+
+    stash.close()
     return os.path.exists(fpath)

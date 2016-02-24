@@ -1,4 +1,5 @@
 import atexit
+import biggie
 import h5py
 import numpy as np
 import os
@@ -61,6 +62,12 @@ def test_convert_npys_to_npzs(npy_files):
         np.testing.assert_array_equal(arc[arr_key], arr)
 
 
+@pytest.fixture()
+def npz_files(npy_files):
+    return minibench.data.convert_npys_to_npzs(
+        npy_files, 'data', WORKSPACE)
+
+
 def test_convert_npys_to_h5py(npy_files):
     fpath = os.path.join(WORKSPACE, "test_h5py.hdf5")
     success = minibench.data.convert_npys_to_h5py(
@@ -76,8 +83,22 @@ def test_convert_npys_to_h5py(npy_files):
         np.testing.assert_array_equal(dset.value, arr)
 
 
-def test_convert_npzs_to_biggie():
-    assert False
+def test_convert_npzs_to_biggie(npz_files):
+    fpath = os.path.join(WORKSPACE, "test_biggie.hdf5")
+    success = minibench.data.convert_npzs_to_biggie(npz_files, fpath)
+
+    assert success
+    stash = biggie.Stash(fpath)
+    for npz in npz_files:
+        key = minibench.data.filebase(npz)
+        entity = stash.get(key)
+        arc = np.load(npz)
+        # TODO: Use yield?
+        for field in entity.keys():
+            np.testing.assert_array_equal(
+                # Update to `entity.get(field)` when biggie:#
+                getattr(entity, field),
+                arc[field])
 
 
 def cleanup():

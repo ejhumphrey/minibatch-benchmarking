@@ -2,27 +2,35 @@ import numpy as np
 import pescador
 
 
-def random_slice_idx(arr_shape, slc_shape, seed=None):
-    """Return a slice object within the valid limits of the given array shape.
+def random_slices(arr_shape, slc_shape, max_count=None, seed=None):
+    """Generate slice objects within the valid limits of the given array shape.
 
-    TODO:
-      * Maybe as a generator? Or a generator version of the same idea.
-      * Move to utils?
+    TODO: Move to utils?
 
     Parameters
     ----------
-    arr_shape : tuple
+    arr_shape : tuple, len=n
         Dimensions of the object to slice.
 
-    scl_shape : tuple
+    scl_shape : tuple, len=n
         Dimensions of the slice to extract, or full if [None]*len(arr_shape).
 
-    Returns
-    -------
+    Yields
+    ------
     slc : slice
         Slice object to use for indexing.
     """
-    pass
+    if len(arr_shape) != len(slc_shape):
+        raise ValueError("shapes must have same length.")
+    max_dims = [(x - y + 1) for x, y in zip(arr_shape, slc_shape)]
+    rng = np.random.RandomState(seed)
+    max_count = np.inf if max_count is None else max_count
+    while max_count:
+        offsets = [rng.randint(x) for x in max_dims]
+        slcs = [slice(start, start + dim)
+                for start, dim in zip(offsets, slc_shape)]
+        yield tuple(slcs)
+        max_count -= 1
 
 
 # ---------------

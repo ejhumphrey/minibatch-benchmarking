@@ -36,3 +36,23 @@ logging.basicConfig(level=logging.INFO)
 def test_touch_npy_load_random(benchmark, npy_files):
     """Stress test random-access loads on saved NPY arrays."""
     assert benchmark(minibench.samplers.touch_npy_load, fpaths=npy_files)
+
+
+def test_npy_load(benchmark, npy_files):
+    pass
+
+
+def test_npy_memmap(benchmark, npy_files):
+    pass
+
+
+def test_npz(benchmark, npz_files):
+    pass
+
+
+def test_h5py(benchmark, h5py_file):
+    pass
+
+
+def test_biggie(benchmark, stash_file):
+    pass

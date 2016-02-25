@@ -3,6 +3,7 @@ sudo: false
 addons:
   apt:
     packages:
+    - libhdf5-serial-dev
     - libzmq-dev
     - python-scipy
     - python3-scipy
@@ -23,6 +24,7 @@ python:
 
 install:
     - pip install coveralls
+    - pip install git+https://github.com/ejhumphrey/biggie.git
     - pip install -e ./
 
 script:

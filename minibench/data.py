@@ -1,6 +1,24 @@
+import biggie
+import h5py
 import numpy as np
 import os
 import uuid
+
+
+def filebase(fpath):
+    """Return the file's base name, e.g. '/x/y.z' -> 'y'
+
+    Parameters
+    ----------
+    fpath : str
+        Filepath to parse
+
+    Returns
+    -------
+    fbase : str
+        Basename of the file.
+    """
+    return os.path.splitext(os.path.basename(fpath))[0]
 
 
 def random_ndarrays(shape, num_items=None, loc=0, scale=1.0,
@@ -70,3 +88,85 @@ def create_npy_collection(shape, num_items, output_dir, **kwargs):
         new_files.append(fpath)
 
     return new_files
+
+
+def convert_npys_to_npzs(npy_files, arr_key, output_dir):
+    """Create a number of NPY files.
+
+    Parameters
+    ----------
+    npy_files = list of str
+        Paths to the created set of files.
+
+    arr_key : str
+        Name to write the array under in the npz archive.
+
+    output_dir : str
+        Path under which to write data.
+
+    Returns
+    -------
+    npz_files : list of str
+        Newly created NPZ files.
+    """
+    npz_files = []
+    for fpath in npy_files:
+        data = {arr_key: np.load(fpath)}
+        npz_path = os.path.join(output_dir, "{}.npz".format(filebase(fpath)))
+        np.savez(npz_path, **data)
+        npz_files.append(npz_path)
+
+    return npz_files
+
+
+def convert_npys_to_h5py(npy_files, fpath):
+    """Convert a collection of NPY files into h5py.
+
+    Note: It will (should?) do this in a flat manner. This is suspected to be
+    suboptimal (hence biggie).
+
+    Parameters
+    ----------
+    npy_files = list of str
+        Paths to the created set of files.
+
+    fpath : str
+        Filepath to write h5py file.
+
+    Returns
+    -------
+    success : bool
+        True if `fpath` exists, else False.
+    """
+    fhandle = h5py.File(fpath)
+    for fpath in npy_files:
+        data = np.load(fpath)
+        fhandle.create_dataset(filebase(fpath), data=data)
+
+    fhandle.close()
+    return os.path.exists(fpath)
+
+
+def convert_npzs_to_biggie(npz_files, fpath):
+    """Convert a collection of NPZ files into a biggie stash.
+
+    Parameters
+    ----------
+    npz_files = list of str
+        Paths to the created set of files.
+
+    fpath : str
+        Filepath to write biggie stash file.
+
+    Returns
+    -------
+    success : bool
+        True if `fpath` exists, else False.
+    """
+    stash = biggie.Stash(fpath)
+    for fpath in npz_files:
+        entity = biggie.Entity(**np.load(fpath))
+        stash.add(filebase(fpath), entity)
+
+    stash.close()
+    return os.path.exists(fpath)

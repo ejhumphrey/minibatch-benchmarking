@@ -1,6 +1,6 @@
 import os
 
-import benchparse
+import minibench.parse as benchparse
 
 
 def test_parse_benchmark_name():

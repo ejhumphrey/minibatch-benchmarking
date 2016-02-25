@@ -21,7 +21,7 @@ def pytest_addoption(parser):
         help="If provided, will not annihilate the data generated.")
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def workspace(request):
     # TODO: Use pytest.config.option('--workspace')
     test_workspace = tempfile.mkdtemp()
@@ -46,8 +46,7 @@ data_params = json.load(open("./params.json"))
 
 
 @pytest.fixture(params=data_params,
-                ids=["{}".format(p) for p in data_params],
-                scope="module")
+                ids=["{}".format(p) for p in data_params])
 def npys_params(request, workspace):
     """Populate a temporary stash file with data.
 
@@ -67,8 +66,7 @@ def npys_params(request, workspace):
 
 
 @pytest.fixture(params=data_params,
-                ids=["{}".format(p) for p in data_params],
-                scope="module")
+                ids=["{}".format(p) for p in data_params])
 def npzs_params(request, workspace):
     npz_files = minibench.data.convert_npys_to_npzs(
         minibench.data.create_npy_collection(
@@ -79,8 +77,7 @@ def npzs_params(request, workspace):
 
 
 @pytest.fixture(params=data_params,
-                ids=["{}".format(p) for p in data_params],
-                scope="module")
+                ids=["{}".format(p) for p in data_params])
 def h5py_params(request, workspace):
     fpath = os.path.join(workspace, "{}.hdf5".format(str(uuid.uuid4())))
     npy_files = minibench.data.create_npy_collection(
@@ -92,8 +89,7 @@ def h5py_params(request, workspace):
 
 
 @pytest.fixture(params=data_params,
-                ids=["{}".format(p) for p in data_params],
-                scope="module")
+                ids=["{}".format(p) for p in data_params])
 def stash_params(request, workspace):
     fpath = os.path.join(workspace, "{}.hdf5".format(str(uuid.uuid4())))
     npz_files = minibench.data.convert_npys_to_npzs(

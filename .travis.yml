@@ -5,8 +5,6 @@ addons:
     packages:
     - libhdf5-serial-dev
     - libzmq-dev
-    - python-scipy
-    - python3-scipy
 
 cache:
   directories:
@@ -22,6 +20,18 @@ python:
     - "3.4"
     - "3.5"
 
+before_install:
+    - bash .travis_dependencies.sh
+    - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+        export PATH="$HOME/env/miniconda27/bin:$PATH";
+      elif [[ "$TRAVIS_PYTHON_VERSION" == "3.4" ]]; then
+        export PATH="$HOME/env/miniconda34/bin:$PATH";
+      else
+        export PATH="$HOME/env/miniconda35/bin:$PATH";
+      fi
+    - hash -r
+    - source activate test-environment
+
 install:
     - pip install coveralls
     - pip install git+https://github.com/ejhumphrey/biggie.git
@@ -29,7 +39,7 @@ install:
 
 script:
     - python --version
-    - py.test -vs minibench
+    - py.test -vs --cov=minibench minibench
 
 after_success:
     - coveralls

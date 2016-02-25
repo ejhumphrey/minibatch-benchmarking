@@ -239,12 +239,14 @@ def mux_random_slice(sampler, collec, shape, working_size=10, lam=25,
     working_size : int, default=10, > 0
         Number of generators to keep alive at any point in time.
 
-    # pescador.mux parameters
+    pescador.mux parameters
+    -------------------------
     lam : scalar, default=25
     pool_weights : array_like, default=None
     with_replacement : bool, default=True
     prune_empty_seeds : bool=True
     revive : bool=False
+        See pescador.mux for more details.
 
     kwargs : dict
         Key-value map for the `sampler` generator.

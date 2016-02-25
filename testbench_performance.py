@@ -48,6 +48,8 @@ def test_npy_load(benchmark, npys_params):
         collec=npy_files,
         shape=params['slice'],
         n_samples=None,
+        lam=params['lam'],
+        working_size=params['working_size'],
         with_replacement=True)
     obs = benchmark(next, sampler)
     assert obs.shape == tuple(params['slice'])
@@ -60,6 +62,8 @@ def test_npy_memmap(benchmark, npys_params):
         collec=npy_files,
         shape=params['slice'],
         n_samples=None,
+        lam=params['lam'],
+        working_size=params['working_size'],
         with_replacement=True,
         mmap_mode='r')
 
@@ -74,6 +78,8 @@ def test_npz_load(benchmark, npzs_params):
         collec=npz_files,
         shape=params['slice'],
         n_samples=None,
+        lam=params['lam'],
+        working_size=params['working_size'],
         with_replacement=True,
         field='data')
 
@@ -90,6 +96,8 @@ def test_h5py(benchmark, h5py_params):
         collec=fp.keys(),
         shape=params['slice'],
         n_samples=None,
+        lam=params['lam'],
+        working_size=params['working_size'],
         with_replacement=True,
         fp=fp)
 
@@ -106,6 +114,8 @@ def test_biggie(benchmark, stash_params):
         collec=stash.keys(),
         shape=params['slice'],
         n_samples=None,
+        lam=params['lam'],
+        working_size=params['working_size'],
         with_replacement=True,
         stash=stash,
         field='data')

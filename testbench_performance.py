@@ -23,6 +23,7 @@ for to successfully generate a json output file.
 import biggie
 import h5py
 import logging
+import os
 import pytest
 
 import minibench
@@ -31,7 +32,7 @@ import minibench
 # TODO: Add verbosity to the config options.
 logging.basicConfig(level=logging.INFO)
 
-# logging.info("Using {} for workspace".format(workspace()))
+# logging.debug("Using {} for workspace".format(workspace()))
 
 
 # def test_touch_npy_load_random(benchmark, npys_params):
@@ -42,7 +43,7 @@ logging.basicConfig(level=logging.INFO)
 
 def test_npy_load(benchmark, npys_params):
     npy_files, params = npys_params
-
+    logging.debug("\nWorkspace: {}".format(os.path.dirname(npy_files[0])))
     sampler = minibench.samplers.mux_random_slice(
         sampler=minibench.samplers.one_npy_random_slice,
         collec=npy_files,
@@ -57,6 +58,7 @@ def test_npy_load(benchmark, npys_params):
 
 def test_npy_memmap(benchmark, npys_params):
     npy_files, params = npys_params
+    logging.debug("\nWorkspace: {}".format(os.path.dirname(npy_files[0])))
     sampler = minibench.samplers.mux_random_slice(
         sampler=minibench.samplers.one_npy_random_slice,
         collec=npy_files,
@@ -73,6 +75,7 @@ def test_npy_memmap(benchmark, npys_params):
 
 def test_npz_load(benchmark, npzs_params):
     npz_files, params = npzs_params
+    logging.debug("\nWorkspace: {}".format(os.path.dirname(npz_files[0])))
     sampler = minibench.samplers.mux_random_slice(
         sampler=minibench.samplers.one_npz_random_slice,
         collec=npz_files,
@@ -89,6 +92,7 @@ def test_npz_load(benchmark, npzs_params):
 
 def test_h5py(benchmark, h5py_params):
     h5py_file, params = h5py_params
+    logging.debug("\nWorkspace: {}".format(os.path.dirname(h5py_file)))
 
     fp = h5py.File(h5py_file)
     sampler = minibench.samplers.mux_random_slice(
@@ -107,6 +111,7 @@ def test_h5py(benchmark, h5py_params):
 
 def test_biggie(benchmark, stash_params):
     stash_file, params = stash_params
+    logging.debug("\nWorkspace: {}".format(os.path.dirname(stash_file)))
 
     stash = biggie.Stash(stash_file)
     sampler = minibench.samplers.mux_random_slice(

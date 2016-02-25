@@ -47,9 +47,24 @@ data_params = json.load(open("./params.json"))
 @pytest.fixture(params=data_params,
                 ids=["{}".format(p) for p in data_params],
                 scope="module")
-def npy_files(request, workspace):
+def npys_params(request, workspace):
     """Populate a temporary stash file with data."""
     return minibench.data.create_npy_collection(
         shape=request.param['shape'],
         num_items=request.param['num_items'],
-        output_dir=workspace)
+        output_dir=workspace), \
+        request.param
+        # Also return the param so we can access it in the test.
+        
+
+@pytest.fixture(params=data_params,
+                ids=["{}".format(p) for p in data_params],
+                scope="module")
+def npzs_params(request, workspace):
+    return minibench.data.convert_npys_to_npzs(
+        minibench.data.create_npy_collection(
+                shape=request.param['shape'],
+                num_items=request.param['num_items'],
+                output_dir=workspace),
+            'data', workspace), \
+        request.param

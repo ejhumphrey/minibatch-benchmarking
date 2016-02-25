@@ -33,21 +33,53 @@ logging.basicConfig(level=logging.INFO)
 # logging.info("Using {} for workspace".format(workspace))
 
 
-def test_touch_npy_load_random(benchmark, npy_files):
-    """Stress test random-access loads on saved NPY arrays."""
-    assert benchmark(minibench.samplers.touch_npy_load, fpaths=npy_files)
+# def test_touch_npy_load_random(benchmark, npys_params):
+#     """Stress test random-access loads on saved NPY arrays."""
+#     npy_files = npys_params[0]
+#     assert benchmark(minibench.samplers.touch_npy_load, fpaths=npy_files)
 
 
-def test_npy_load(benchmark, npy_files):
-    pass
+def test_npy_load(benchmark, npys_params):
+    npy_files, params = npys_params
+    # Todo / question: this doens't necessarily and maybe
+    #  shouldn't be the same as the size of the data generated.
+    slice_shape = params['n_samples']
+    # What to set this to?
+    # We could also do separate experiments for sampling full
+    # files vs parts?
+    n_samples = params['n_samples']
+    assert benchmark(minibench.samplers.mux_random_slice,
+        sampler=minibench.samplers.one_npy_random_slice,
+        collec=npy_files,
+        shape=slice_shape,
+        n_samples=n_samples,
+        with_replacement=False)
 
 
-def test_npy_memmap(benchmark, npy_files):
-    pass
+def test_npy_memmap(benchmark, npys_params):
+    npy_files, params = npys_params
+    slice_shape = params['n_samples']
+    n_samples = params['n_samples']
+    assert benchmark(minibench.samplers.mux_random_slice,
+        sampler=minibench.samplers.one_npy_random_slice,
+        collec=npy_files,
+        shape=slice_shape,
+        n_samples=n_samples,
+        with_replacement=False,
+        mmap_mode='r')
 
 
-def test_npz(benchmark, npz_files):
-    pass
+def test_npz_load(benchmark, npzs_params):
+    npz_files, params = npzs_params
+    slice_shape = params['n_samples']
+    n_samples = params['n_samples']
+    assert benchmark(minibench.samplers.mux_random_slice,
+        sampler=minibench.samplers.one_npz_random_slice,
+        collec=npz_files,
+        shape=slice_shape,
+        n_samples=n_samples,
+        with_replacement=False,
+        field='data')
 
 
 def test_h5py(benchmark, h5py_file):

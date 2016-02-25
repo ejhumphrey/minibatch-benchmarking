@@ -3,6 +3,7 @@ import os
 import pytest
 import tempfile
 import shutil
+import uuid
 
 import minibench.data
 
@@ -48,23 +49,57 @@ data_params = json.load(open("./params.json"))
                 ids=["{}".format(p) for p in data_params],
                 scope="module")
 def npys_params(request, workspace):
-    """Populate a temporary stash file with data."""
+    """Populate a temporary stash file with data.
+
+    Returns
+    -------
+    npy_files : list of str
+        Collection of npy files on disk.
+
+    param : obj
+        Each data param item.
+    """
     return minibench.data.create_npy_collection(
         shape=request.param['shape'],
         num_items=request.param['num_items'],
         output_dir=workspace), \
         request.param
-        # Also return the param so we can access it in the test.
-        
+
 
 @pytest.fixture(params=data_params,
                 ids=["{}".format(p) for p in data_params],
                 scope="module")
 def npzs_params(request, workspace):
-    return minibench.data.convert_npys_to_npzs(
+    npz_files = minibench.data.convert_npys_to_npzs(
         minibench.data.create_npy_collection(
                 shape=request.param['shape'],
                 num_items=request.param['num_items'],
-                output_dir=workspace),
-            'data', workspace), \
-        request.param
+                output_dir=workspace), 'data', workspace)
+    return npz_files, request.param
+
+
+@pytest.fixture(params=data_params,
+                ids=["{}".format(p) for p in data_params],
+                scope="module")
+def h5py_params(request, workspace):
+    fpath = os.path.join(workspace, "{}.hdf5".format(str(uuid.uuid4())))
+    npy_files = minibench.data.create_npy_collection(
+        shape=request.param['shape'],
+        num_items=request.param['num_items'],
+        output_dir=workspace)
+    minibench.data.convert_npys_to_h5py(npy_files, fpath)
+    return fpath, request.param
+
+
+@pytest.fixture(params=data_params,
+                ids=["{}".format(p) for p in data_params],
+                scope="module")
+def stash_params(request, workspace):
+    fpath = os.path.join(workspace, "{}.hdf5".format(str(uuid.uuid4())))
+    npz_files = minibench.data.convert_npys_to_npzs(
+        minibench.data.create_npy_collection(
+                shape=request.param['shape'],
+                num_items=request.param['num_items'],
+                output_dir=workspace), 'data', workspace)
+    minibench.data.convert_npzs_to_biggie(npz_files, fpath)
+    return fpath, request.param

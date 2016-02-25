@@ -1,6 +1,58 @@
 [
-    { "num_items": 10, "shape": [64, 64], "n_samples": 200 },
-    { "num_items": 100, "shape": [64, 64], "n_samples": 200 },
-    { "num_items": 10, "shape": [2048, 256], "n_samples": 200 },
-    { "num_items": 100, "shape": [2048, 256], "n_samples": 200 }
+    {
+        "num_items": 50,
+        "shape": [64, 64],
+        "slice": [64, 64],
+        "working_size": 1,
+        "lam": 1
+    },
+    {
+        "num_items": 500,
+        "shape": [64, 64],
+        "slice": [64, 64],
+        "working_size": 1,
+        "lam": 1
+    },
+    {
+        "num_items": 50,
+        "shape": [2048, 256],
+        "slice": [2048, 256],
+        "working_size": 1,
+        "lam": 1
+    },
+    {
+        "num_items": 500,
+        "shape": [2048, 256],
+        "slice": [2048, 256],
+        "working_size": 1,
+        "lam": 1
+    },
+    {
+        "num_items": 50,
+        "shape": [64, 64],
+        "slice": [16, 16],
+        "working_size": 1,
+        "lam": 1
+    },
+    {
+        "num_items": 500,
+        "shape": [64, 64],
+        "slice": [16, 16],
+        "working_size": 1,
+        "lam": 1
+    },
+    {
+        "num_items": 50,
+        "shape": [2048, 256],
+        "slice": [16, 16],
+        "working_size": 1,
+        "lam": 1
+    },
+    {
+        "num_items": 500,
+        "shape": [2048, 256],
+        "slice": [16, 16],
+        "working_size": 1,
+        "lam": 1
+    }
 ]

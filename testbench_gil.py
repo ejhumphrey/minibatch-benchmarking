@@ -53,7 +53,7 @@ def theano_test_fx(n_dots):
 
 
 @pytest.fixture
-def npy_sampler(benchmark, npys_params):
+def npy_sampler_params(benchmark, npys_params):
     npy_files, params = npys_params
 
     sampler = minibench.samplers.mux_random_slice(
@@ -64,24 +64,37 @@ def npy_sampler(benchmark, npys_params):
         lam=params['lam'],
         working_size=params['working_size'],
         with_replacement=True)
-    return sampler
+    return sampler, params
 
 
 @pytest.fixture
-def 
+def zmq_sampler_params(benchmark, npys_params):
+    npy_files, params = npys_params
+
+    sampler = minibench.samplers.zmq_random_slice(
+        sampler=minibench.samplers.one_npy_random_slice,
+        collec=npy_files,
+        shape=params['slice'],
+        n_samples=200,
+        lam=params['lam'],
+        working_size=params['working_size'],
+        with_replacement=True)
+    return sampler, params
 
 
-def test_theano_test_fx():
+def run_theano_fx(train_fx, sampler, weights):
     """Make some data and make sure the function runs"""
-    samples = np.random.random([12, 16])
-    weights = np.random.random((samples.shape[1],)*2)
-
-    train = theano_test_fx(n_dots=10)
-    err = train(samples, weights)
+    for sample in sampler:
+        err = train_fx(sample, weights)
 
 
-def test_pescador_same_thread():
-    pass
+def test_pescador_same_thread(benchmark, npy_sampler_params):
+    sampler, params = npy_sampler_params
+    weights = np.random.random((params['shape'][-1],)*2)
+    train_fx = theano_test_fx(n_dots=10)
+
+    assert benchmark(train_fx, sampler, weights)
+
 
 
 def test_zmq_sampling_no_copy():

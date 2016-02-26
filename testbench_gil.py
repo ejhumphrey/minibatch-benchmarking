@@ -20,11 +20,8 @@ for to successfully generate a json output file.
 
   $ py.test -vs testbench_performance.py --benchmark-save=bench1
 """
-import biggie
-import h5py
 import logging
 import numpy as np
-import pescador
 import pytest
 
 import theano
@@ -35,11 +32,11 @@ import minibench
 logging.basicConfig(level=logging.INFO)
 
 
-def theano_test_fx(n_dots):
+def theano_test_fx(n_dots, w_shape):
     # input vector.
     x = T.matrix('x')
     # A fake weight matrix.
-    w = T.matrix('w')
+    w = theano.shared(np.random.random(w_shape), name='w')
 
     result = x
     for i in range(n_dots):
@@ -49,7 +46,9 @@ def theano_test_fx(n_dots):
         if i % 3 == 0:
             result = T.sqrt(result)
     result = T.mean(result)
-    return theano.function([x, w], result)
+    return theano.function(inputs=[x],
+                           outputs=result,
+                           updates=[(w, w-.0001)])
 
 
 @pytest.fixture
@@ -82,36 +81,34 @@ def zmq_sampler_params(benchmark, npys_params):
     return sampler, params
 
 
-def run_theano_fx(train_fx, sampler, weights):
+def run_theano_fx(train_fx, sampler):
     """Make some data and make sure the function runs"""
     errs = []
     for sample in sampler:
         # the np.array is required here because pescador is producing
         # unaligned numpy arrays :(
-        errs += [train_fx(np.array(sample['X']), weights)]
+        errs += [train_fx(np.array(sample['X']))]
     return np.mean(errs)
 
 
 def test_pescador_same_thread(benchmark, npy_sampler_params):
     sampler, params = npy_sampler_params
 
-    weights = np.random.random((params['slice'][-1],)*2)
-    train_fx = theano_test_fx(n_dots=5)
+    train_fx = theano_test_fx(n_dots=5, w_shape=(params['slice'][-1],)*2)
 
     # run_theano_fx(train_fx, sampler, weights)
-    assert benchmark(run_theano_fx, train_fx, sampler, weights)
+    assert benchmark(run_theano_fx, train_fx, sampler)
 
 
 def test_zmq_sampling_no_copy(benchmark, zmq_sampler_params):
     sampler, params = zmq_sampler_params
 
-    weights = np.random.random((params['slice'][-1],)*2)
-    train_fx = theano_test_fx(n_dots=5)
+    train_fx = theano_test_fx(n_dots=5, w_shape=(params['slice'][-1],)*2)
 
     # run_theano_fx(train_fx, sampler, weights)
     # Forcing a copy in the run_ function, so this is actually
     #  doing the copy all the time, even though this says no copy.
-    assert benchmark(run_theano_fx, train_fx, sampler, weights)
+    assert benchmark(run_theano_fx, train_fx, sampler)
 
 
 # def test_zmq_sampling_copy():

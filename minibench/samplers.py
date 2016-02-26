@@ -122,7 +122,7 @@ def one_npy_random_slice(fpath, shape, mmap_mode=None, **kwargs):
     data_shape = np.shape(np_data)
     # Generate a slice in the bounds of this data.
     for new_slice in random_slices(data_shape, shape, **kwargs):
-        yield np_data[new_slice]
+        yield {'X': np_data[new_slice]}
 
 
 def one_npz_random_slice(fpath, field, shape, **kwargs):
@@ -152,7 +152,7 @@ def one_npz_random_slice(fpath, field, shape, **kwargs):
     arc = np.load(fpath)
     arr_shape = np.shape(arc[field])
     for new_slice in random_slices(arr_shape, shape, **kwargs):
-        yield arc[field][new_slice]
+        yield {'X': arc[field][new_slice]}
 
 
 def one_h5py_random_slice(key, fp, shape, **kwargs):
@@ -186,7 +186,7 @@ def one_h5py_random_slice(key, fp, shape, **kwargs):
     dset = fp[key]
     arr_shape = dset.shape
     for new_slice in random_slices(arr_shape, shape, **kwargs):
-        yield dset[new_slice]
+        yield {'X': dset[new_slice]}
 
 
 def one_biggie_random_slice(key, stash, field, shape, **kwargs):
@@ -215,7 +215,7 @@ def one_biggie_random_slice(key, stash, field, shape, **kwargs):
     entity = stash.get(key)
     arr_shape = entity[field].shape
     for new_slice in random_slices(arr_shape, shape, **kwargs):
-        yield entity[field].slice(new_slice)
+        yield {'X': entity[field].slice(new_slice)}
 
 
 def mux_random_slice(sampler, collec, shape, working_size=10, lam=25,
@@ -263,3 +263,10 @@ def mux_random_slice(sampler, collec, shape, working_size=10, lam=25,
                         k=working_size, lam=lam, pool_weights=pool_weights,
                         with_replacement=with_replacement,
                         prune_empty_seeds=prune_empty_seeds, revive=revive)
+
+
+def zmq_random_slice(**kwargs):
+    """Thin wrapper on mux_random_slice which just adds zmq streaming to it."""
+    streamer = pescador.Streamer(mux_random_slice(**kwargs))
+    return pescador.zmq_stream(streamer)
+    # return streamer

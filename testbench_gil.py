@@ -23,41 +23,73 @@ for to successfully generate a json output file.
 import biggie
 import h5py
 import logging
+import numpy as np
+import pescador
 import pytest
+
+import theano
+import theano.tensor as T
 
 import minibench
 
 logging.basicConfig(level=logging.INFO)
 
 
-def heavy_cpu_fx(x):
-    for n in range(1000):
-        np.power(np.sqrt(np.abs(np.fft(x))), 2)
-        # You could sleep here or not just for fun / extra cycles.
-    return x
+def theano_test_fx(n_dots):
+    # input vector.
+    x = T.matrix('x')
+    # A fake weight matrix.
+    w = T.matrix('w')
+
+    result = x
+    for i in range(n_dots):
+        result = T.dot(result, w)
+        # Some more computation, and keep the value
+        # from exploding (although who cares, really).
+        if i % 3 == 0:
+            result = T.sqrt(result)
+    result = T.mean(result)
+    return theano.function([x, w], [result])
 
 
-def example_training_loop(sampler, train):
-    """
-    Parameters
-    ----------
-    sampler : generator
-        Generator which yields np.ndarrays
+@pytest.fixture
+def npy_sampler(benchmark, npys_params):
+    npy_files, params = npys_params
 
-    train : function
-        A do-the-thing funciton that uses CPU cycles.
-    """
-    # Get some data to start with
-    working_data = next(sampler)
-
-    for next_data in sampler:
-        err = train(working_data)
-
-        working_data = next_data
-
-    return err
+    sampler = minibench.samplers.mux_random_slice(
+        sampler=minibench.samplers.one_npy_random_slice,
+        collec=npy_files,
+        shape=params['slice'],
+        n_samples=200,
+        lam=params['lam'],
+        working_size=params['working_size'],
+        with_replacement=True)
+    return sampler
 
 
+@pytest.fixture
+def 
+
+
+def test_theano_test_fx():
+    """Make some data and make sure the function runs"""
+    samples = np.random.random([12, 16])
+    weights = np.random.random((samples.shape[1],)*2)
+
+    train = theano_test_fx(n_dots=10)
+    err = train(samples, weights)
+
+
+def test_pescador_same_thread():
+    pass
+
+
+def test_zmq_sampling_no_copy():
+    pass
+
+
+def test_zmq_sampling_copy():
+    pass
 
 
 # def test_npy_load(benchmark, npys_params):

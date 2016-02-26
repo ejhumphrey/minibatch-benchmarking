@@ -51,7 +51,7 @@ def test_one_npy_load_random_slice(npy_files):
             fpath, slice_shape, mmap_mode=None, max_count=max_count)
 
         for rand_slice in sampler:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
@@ -59,7 +59,7 @@ def test_one_npy_load_random_slice(npy_files):
             fpath, slice_shape, mmap_mode=None, max_count=max_count)
 
         for rand_slice in sampler:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
 
 def test_one_npy_memmap_random_slice(npy_files):
@@ -72,7 +72,7 @@ def test_one_npy_memmap_random_slice(npy_files):
             fpath, slice_shape, mmap_mode='r', max_count=max_count)
 
         for rand_slice in sampler:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
@@ -80,7 +80,7 @@ def test_one_npy_memmap_random_slice(npy_files):
             fpath, slice_shape, mmap_mode='r', max_count=max_count)
 
         for rand_slice in sampler:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
 
 def test_one_npz_load_random_slice(npz_files):
@@ -93,7 +93,7 @@ def test_one_npz_load_random_slice(npz_files):
             fpath, field, slice_shape, max_count=max_count)
 
         for rand_slice in slicer:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
@@ -101,7 +101,7 @@ def test_one_npz_load_random_slice(npz_files):
             fpath, field, slice_shape, max_count=max_count)
 
         for rand_slice in slicer:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
 
 def test_one_h5py_random_slice(h5py_file):
@@ -115,7 +115,7 @@ def test_one_h5py_random_slice(h5py_file):
             key, fp, slice_shape, max_count=max_count)
 
         for rand_slice in sampler:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
@@ -123,7 +123,7 @@ def test_one_h5py_random_slice(h5py_file):
             key, fp, slice_shape, max_count=max_count)
 
         for rand_slice in sampler:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
 
 def test_one_biggie_random_slice(stash_file):
@@ -138,7 +138,7 @@ def test_one_biggie_random_slice(stash_file):
             key, stash, field, slice_shape, max_count=max_count)
 
         for rand_slice in sampler:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
         # Get a few of a different shape
         slice_shape = (1, 20)
@@ -146,7 +146,7 @@ def test_one_biggie_random_slice(stash_file):
             key, stash, field, slice_shape, max_count=max_count)
 
         for rand_slice in sampler:
-            assert rand_slice.shape == slice_shape
+            assert rand_slice['X'].shape == slice_shape
 
 
 def test_mux_random_slice(npy_files):
@@ -158,4 +158,16 @@ def test_mux_random_slice(npy_files):
 
     # Run the sampler to exhaustion.
     for rand_slice in sampler:
-        assert rand_slice.shape == slice_shape
+        assert rand_slice['X'].shape == slice_shape
+
+
+def test_zmq_random_slice(npy_files):
+    slice_shape = (3, 2)
+    sampler = minibench.samplers.zmq_random_slice(
+        sampler=minibench.samplers.one_npy_random_slice,
+        collec=npy_files, shape=slice_shape,
+        max_count=3, with_replacement=False)
+
+    # Run the sampler to exhaustion.
+    for rand_slice in sampler:
+        assert rand_slice['X'].shape == slice_shape
